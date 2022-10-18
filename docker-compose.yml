@@ -1,0 +1,77 @@
+version: '3.7'
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: ${DOCKER_NAME}-nginx
+    ports:
+      - 8700:80
+    volumes:
+      - ./:/var/www/
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - dashboard-network
+    
+  app:
+    build: 
+      args:
+        user: laraveluser
+        uid: 1000
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    container_name: ${DOCKER_NAME}-app
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - dashboard-network
+
+  sftpserver:
+    image: atmoz/sftp
+    container_name: "${DOCKER_NAME}-sftpserver"
+    volumes:
+        - ./docker/ftp:/home/alt/uploads
+    ports:
+        - "${FTP_PORT}:22"
+    command: ${FTP_USER}:${FTP_PASSWORD}:1001:12345:/alt-home
+    networks:
+      - dashboard-network
+  
+  mysql:
+    image: "mysql:8.0"
+    container_name: ${DOCKER_NAME}-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
+      SERVICE_NAME: mysql
+    ports:
+      - 33669:3306
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    networks:
+      - dashboard-network
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ${DOCKER_NAME}-phpmyadmin
+    links:
+      - mysql:mysql
+    ports:
+      - 7700:80
+    environment:
+      MYSQL_USERNAME: "${DB_USERNAME}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      PMA_HOST: mysql
+    networks:
+      - dashboard-network
+
+networks:
+  dashboard-network:
+    driver: bridge
