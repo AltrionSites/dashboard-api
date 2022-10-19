@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Exception;
 use Illuminate\Http\Response;
 
 use App\Models\News;
 use App\Http\Requests\IndexRequest;
+use App\Http\Requests\News\PutRequest;
 use App\Http\Requests\News\StoreRequest;
+use App\Http\Requests\DirectionRequest;
 
 use App\Traits\ApiResponser;
 use App\Traits\File;
@@ -76,6 +79,116 @@ class NewsController extends Controller
         }
         $news->save();
         return $this->successResponse($this->jsonResponse($news));
+    }
+
+    public function update(PutRequest $request, $id)
+    {
+        $news = News::find($id);
+        if(!$news)
+        {
+            return $this->errorResponse('No se encontro la noticia.', Response::HTTP_NOT_FOUND);
+        }
+
+        if(!is_null($request->image))
+        {
+            try
+            {
+                $uniqueImgName = $this->generateFileUniqueName(News::class, 'image');
+                $imgExtension = $request->file('image')->getClientOriginalExtension();
+                $this->createImages($request->file('image'), env('NEWS_IMAGES'), $uniqueImgName, $imgExtension);
+                $this->deleteImages(env('NEWS_IMAGES'), $news->image);
+                $news->image = $uniqueImgName.'.'.$imgExtension;
+            }
+            catch(Exception $e)
+            {
+                return $this->errorResponse('Ocurrió un error al subir la imagen. Excepción: '. $e->getMessage(), Response::HTTP_EXPECTATION_FAILED);
+            }
+        } else
+        {
+            $news->image = $news->image;
+        }
+        $news->update([
+            'title' => $request->validated('title'),
+            'content' => $request->validated('content'),
+            'link' => $request->validated('link'),
+            'visible' => $request->validated('visible'),
+            'position' => $news->position
+        ]);
+
+        return $this->successResponse($this->jsonResponse($news));
+    }
+
+    public function changeVisibility($id)
+    {
+        $news = News::find($id);
+        if(!$news)
+        {
+            return $this->errorResponse('No se encontro la noticia.', Response::HTTP_NOT_FOUND);
+        }
+        $visibility = ($news->visible == 1) ? $news->visible = 0 : $news->visible = 1;
+        $news->update(['visible' => $visibility]);
+        return $this->successResponse($this->jsonResponse($news));
+    }
+
+    public function changePosition(DirectionRequest $request, $id)
+    {
+        $news = News::find($id);
+        if(!$news)
+        {
+            return $this->errorResponse('No se encontro la noticia.', Response::HTTP_NOT_FOUND);
+        }
+        $newsPosition = $news->position;
+        if($request->direction == $request::UP_DIRECTION)
+        {
+            $nextNews = $this->getNext($news);
+            if(!is_null($nextNews))
+            {
+                $news->update(['position' => $nextNews->position]);
+                $nextNews->update(['position' => $newsPosition]);
+            }
+        }
+        elseif($request->direction == $request::DOWN_DIRECTION)
+        {
+            $previousNews = $this->getPrevious($news);
+            if(!is_null($previousNews))
+            {
+                $news->update(['position' => $previousNews->position]);
+                $previousNews->update(['position' => $newsPosition]);
+            }
+        }
+        return $this->successResponse($this->jsonResponse($news));
+    }
+
+    public function destroy($id)
+    {
+        $news = News::find($id);
+        if(!$news)
+        {
+            return $this->errorResponse('No se encontro la noticia.', Response::HTTP_NOT_FOUND);
+        }
+        $news->delete();
+        return $this->successResponse($this->jsonResponse($news));
+    }
+
+    public function restore($id)
+    {
+        $news = News::withTrashed()->find($id);
+        if(!$news)
+        {
+            return $this->errorResponse('No se encontro la noticia.', Response::HTTP_NOT_FOUND);
+        }
+        $news->restore();
+        return $this->successResponse($this->jsonResponse($news));
+    }
+
+    private function getNext($news)
+    {
+        return News::where('position', '<', $news->position)->orderByDesc('position')->first();
+    }
+
+    private function getPrevious($news)
+    {
+        return News::where('position', '>', $news->position)->orderBy('position', 'asc')->first();
     }
 
     public function jsonResponse($data)

@@ -50,5 +50,10 @@ Route::group([
         Route::get('', 'index');
         Route::get('/{id}', 'view');
         Route::post('', 'store');
+        Route::post('/{id}', 'update');
+        Route::post('/{id}/change-visibility', 'changeVisibility');
+        Route::post('/{id}/change-position', 'changePosition');
+        Route::delete('/{id}', 'destroy');
+        Route::post('/{id}/restore-news', 'restore');
     });
 });

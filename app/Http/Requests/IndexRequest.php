@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class IndexRequest extends FormRequest
@@ -57,7 +58,7 @@ class IndexRequest extends FormRequest
 
     public function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
-        $response = $this->errorResponse($validator->errors(), 400);
+        $response = $this->errorResponse($validator->errors(), Response::HTTP_BAD_REQUEST);
         throw new ValidationException($validator, $response);
     }
 }
