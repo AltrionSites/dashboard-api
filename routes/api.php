@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,5 +56,18 @@ Route::group([
         Route::post('/{id}/change-position', 'changePosition');
         Route::delete('/{id}', 'destroy');
         Route::post('/{id}/restore-news', 'restore');
+    });
+});
+
+Route::group([
+    'prefix' => 'services',
+    'middleware' => 'jwt.auth',
+], function(){
+    Route::controller(ServiceController::class)->group(function(){
+        Route::get('', 'index');
+        Route::get('/{id}', 'view');
+        Route::post('/', 'store');
+        Route::post('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
     });
 });

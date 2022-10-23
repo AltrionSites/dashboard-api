@@ -32,6 +32,7 @@ class UserController extends Controller
                 'lastname' => $u->lastname,
                 'email' => $u->email,
                 'location' => $u->location,
+                'linkedin' => $u->linkedin,
             ];
         });
 
@@ -57,6 +58,7 @@ class UserController extends Controller
         $user->email = $request->validated('email');
         $user->password = Hash::make($request->validated('password'));
         $user->location = $request->validated('location');
+        $user->linkedin = $request->validated('linkedin');
         $user->save();
 
         return $this->successResponse($this->jsonResponse($user));
@@ -75,7 +77,8 @@ class UserController extends Controller
             'firstname' => $request->validated('firstname'),
             'lastname' => $request->validated('lastname'),
             'email' => $request->validated('email'),
-            'location' => $request->validated('location')
+            'location' => $request->validated('location'),
+            'linkedin' => $request->validated('linkedin'),
         ]);
 
         return $this->successResponse($this->jsonResponse($user));
@@ -111,7 +114,8 @@ class UserController extends Controller
             'firstname' => $data->firstname,
             'lastname' => $data->lastname,
             'email' => $data->email,
-            'location' => $data->location
+            'location' => $data->location,
+            'linkedin' => $data->linkedin
         ];
     }
 }
