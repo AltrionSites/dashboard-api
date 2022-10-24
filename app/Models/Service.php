@@ -15,9 +15,4 @@ class Service extends Model
         'image',
         'user_service_manager',
     ];
-
-    public function getUser($id)
-    {
-        return $this->belongsTo(User::class, 'user_service_manager', 'id')->first();
-    }
 }

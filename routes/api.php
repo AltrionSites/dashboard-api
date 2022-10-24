@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectImageController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -69,5 +71,28 @@ Route::group([
         Route::post('/', 'store');
         Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+    });
+});
+
+Route::group([
+    'prefix' => 'projects',
+    'middleware' => 'jwt.auth', 
+], function(){
+    Route::controller(ProjectController::class)->group(function(){
+        Route::get('', 'index');
+        Route::get('/{id}', 'view');
+        Route::post('', 'store');
+        Route::post('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+});
+
+Route::group([
+    'prefix' => 'projects-images',
+    'middleware' => 'jwt.auth',
+], function(){
+    Route::controller(ProjectImageController::class)->group(function(){
+        Route::post('', 'store');
+        Route::delete('/{projectId}/destroy-image/{id}', 'destroy');
     });
 });
