@@ -136,6 +136,7 @@ class ServiceController extends Controller
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'linkedin' => $user->linkedin,
+            'position' => $user->position,
         ];
     }
 
