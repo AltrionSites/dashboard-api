@@ -84,6 +84,17 @@ class ProjectController extends Controller
         return $this->successResponse($this->jsonResponse($project));   
     }
 
+    public function restore($id)
+    {
+        $project = Project::withTrashed()->find($id);
+        if(!$project)
+        {
+            return $this->errorResponse('No se encontro el proyecto', Response::HTTP_NOT_FOUND);
+        }
+        $project->restore();
+        return $this->successResponse($this->jsonResponse($project));
+    }
+
     private function jsonResponse($data)
     {
         return [

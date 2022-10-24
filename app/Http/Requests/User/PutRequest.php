@@ -34,6 +34,7 @@ class PutRequest extends FormRequest
             'lastname' => 'required|min:3',
             'location' => 'required',
             'linkedin' => 'required|url',
+            'position' => 'required',
         ];
     }
 
@@ -53,6 +54,7 @@ class PutRequest extends FormRequest
             'location.required' => 'La locación es requerida.',
             'linkedin.required' => 'Es necesario el enlace de Linkedin para actualizar el usuario.',
             'linkedin.url' => 'El formato de enlace es inválido.',
+            'position.required' => 'El cargo del usuario es obligatorio.',
         ];
     }
 

@@ -37,6 +37,7 @@ class StoreRequest extends FormRequest
             'lastname' => 'required|min:3',
             'location' => 'required',
             'linkedin' => 'required|url',
+            'position' => 'required',
         ];
     }
 
@@ -58,6 +59,7 @@ class StoreRequest extends FormRequest
             'location.required' => 'La locación es requerida.',
             'linkedin.required' => 'Es necesario el enlace de Linkedin para crear el usuario.',
             'linkedin.url' => 'El formato de enlace es inválido.',
+            'position.required' => 'El cargo del usuario es requerido.',
         ];
     }
 

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('location');
+            $table->string('linkedin');
+            $table->string('position');
             $table->timestamps();
             $table->softDeletes();
         });
