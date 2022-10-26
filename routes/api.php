@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CountController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectImageController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskImageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -95,5 +98,37 @@ Route::group([
     Route::controller(ProjectImageController::class)->group(function(){
         Route::post('', 'store');
         Route::delete('/{projectId}/destroy-image/{id}', 'destroy');
+    });
+});
+
+Route::group([
+    'prefix' => 'tasks',
+    'middleware' => 'jwt.auth',
+], function(){
+    Route::controller(TaskController::class)->group(function(){
+        Route::get('', 'index');
+        Route::get('/{id}', 'view');
+        Route::post('', 'store');
+        Route::post('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+});
+
+Route::group([
+    'prefix' => 'tasks-images',
+    'middleware' => 'jwt.auth',
+], function(){
+    Route::controller(TaskImageController::class)->group(function(){
+        Route::post('', 'store');
+        Route::delete('/{taskId}/destroy-image/{id}', 'destroy');
+    });
+});
+
+Route::group([
+    'prefix' => 'counts',
+    'middleware' => 'jwt.auth',
+], function(){
+    Route::controller(CountController::class)->group(function(){
+        Route::get('', 'count');
     });
 });

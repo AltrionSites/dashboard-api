@@ -89,7 +89,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
+    'ttl' => env('JWT_TTL', 20160),
 
     /*
     |--------------------------------------------------------------------------
@@ -234,7 +234,7 @@ return [
     |
     */
 
-    'show_black_list_exception' => env('JWT_SHOW_BLACKLIST_EXCEPTION', true),
+    'show_black_list_exception' => env('JWT_SHOW_BLACKLIST_EXCEPTION', 0),
 
     /*
     |--------------------------------------------------------------------------
