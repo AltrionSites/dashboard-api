@@ -11,7 +11,7 @@ class IndexRequest extends FormRequest
 {
     use ApiResponser;
 
-    const MAX_PAGE_SIZE = 50;
+    const MAX_PAGE_SIZE = 10;
     /**
      * Determine if the user is authorized to make this request.
      *

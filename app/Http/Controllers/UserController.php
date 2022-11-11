@@ -21,7 +21,13 @@ class UserController extends Controller
 
     public function index(IndexRequest $request)
     {
-        $usersQuery = User::orderByDesc('id');
+        $usersQuery = User::where(
+            [
+                ['firstname', 'LIKE', '%'. $request->search. '%'],
+                ['lastname', 'LIKE', '%'. $request->search. '%'],
+                ['username', 'LIKE', '%'. $request->search. '%']
+            ]
+        )->orderByDesc('id');
         $pageSize = $request->has('page_size') ? $request->page_size : $request::MAX_PAGE_SIZE;
 
         $result = $usersQuery->paginate($pageSize)->through(function($u) {

@@ -30,6 +30,7 @@ class PutRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'description' => 'required',
+            'link' => 'nullable|url',
         ];
     }
 
@@ -38,7 +39,8 @@ class PutRequest extends FormRequest
         return [
             'user_id.required' => 'El usuario es requerido.',
             'user_id.exists' => 'El usuario ingresado no existe',
-            'description.required' => 'La descripción es requerida.'
+            'description.required' => 'La descripción es requerida.',
+            'link.url' => 'El enlace es inválido.',
         ];
     }
 

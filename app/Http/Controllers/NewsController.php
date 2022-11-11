@@ -26,7 +26,7 @@ class NewsController extends Controller
 
     public function index(IndexRequest $request)
     {
-        $newsQuery = News::where('visible', '=', 1)->orderByDesc('position');
+        $newsQuery = News::where('title', 'LIKE', '%'. $request->search. '%')->orderByDesc('position');
         $pageSize = $request->has('page_size') ? $request->page_size : $request::MAX_PAGE_SIZE;
 
         $result = $newsQuery->paginate($pageSize)->through(function($n){
@@ -183,12 +183,12 @@ class NewsController extends Controller
 
     private function getNext($news)
     {
-        return News::where('position', '<', $news->position)->orderByDesc('position')->first();
+        return News::where('position', '>', $news->position)->orderBy('position', 'asc')->first();
     }
 
     private function getPrevious($news)
     {
-        return News::where('position', '>', $news->position)->orderBy('position', 'asc')->first();
+        return News::where('position', '<', $news->position)->orderBy('position', 'desc')->first();
     }
 
     public function jsonResponse($data)

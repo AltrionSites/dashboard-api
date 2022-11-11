@@ -28,8 +28,8 @@ class PutRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|unique:users|min:3',
-            'email' => 'required|unique:users|email',
+            'username' => 'required|min:3',
+            'email' => 'required|email',
             'firstname' => 'required|min:3',
             'lastname' => 'required|min:3',
             'location' => 'required',

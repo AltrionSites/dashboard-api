@@ -74,6 +74,7 @@ Route::group([
         Route::post('/', 'store');
         Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+        Route::post('/{id}/restore-service', 'restore');
     });
 });
 
@@ -87,7 +88,7 @@ Route::group([
         Route::post('', 'store');
         Route::post('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
-        Route::post('/{id}', 'restore');
+        Route::post('/{id}/restore-project', 'restore');
     });
 });
 
@@ -96,6 +97,8 @@ Route::group([
     'middleware' => 'jwt.auth',
 ], function(){
     Route::controller(ProjectImageController::class)->group(function(){
+        Route::get('/{id}', 'listImages');
+        Route::get('/{id}/view-image', 'getImage');
         Route::post('', 'store');
         Route::delete('/{projectId}/destroy-image/{id}', 'destroy');
     });
@@ -107,9 +110,11 @@ Route::group([
 ], function(){
     Route::controller(TaskController::class)->group(function(){
         Route::get('', 'index');
+        Route::get('/user-tasks', 'listByUser');
         Route::get('/{id}', 'view');
         Route::post('', 'store');
         Route::post('/{id}', 'update');
+        Route::post('/{id}/complete-task', 'complete');
         Route::delete('/{id}', 'destroy');
     });
 });
@@ -120,6 +125,8 @@ Route::group([
 ], function(){
     Route::controller(TaskImageController::class)->group(function(){
         Route::post('', 'store');
+        Route::get('/{id}', 'listImages');
+        Route::get('/{id}/view-image', 'getImage');
         Route::delete('/{taskId}/destroy-image/{id}', 'destroy');
     });
 });

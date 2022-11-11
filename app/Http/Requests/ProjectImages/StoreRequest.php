@@ -28,17 +28,15 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'images.*' => 'required|mimes:jpg,png,jpeg,JPG,PNG,JPEG',
-            'images' => 'max:4',
+            'image' => 'required|mimes:jpg,png,jpeg,JPG,PNG,JPEG',
         ];
     }
 
     public function messages()
     {
         return [
-            'images.*.required' => 'Las imágenes son requeridas.',
-            'images.*.mimes' => 'El formato de las imágenes es incorrecto, debe ser de tipo < JPG, PNG, JPEG >',
-            'images.max' => 'La cantidad máxima de imágenes que puedes subir es de 4.',
+            'image.required' => 'Las imágenes son requeridas.',
+            'image.mimes' => 'El formato de las imágenes es incorrecto, debe ser de tipo < JPG, PNG, JPEG >',
         ];
     }
 

@@ -29,7 +29,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'task_id' => 'required|exists:users_tasks,id',
-            'images.*' => 'required|mimes:jpg,jpeg,png,JPG,JPEG,PNG'
+            'image' => 'required|mimes:jpg,jpeg,png,JPG,JPEG,PNG'
         ];
     }
 
@@ -38,8 +38,8 @@ class StoreRequest extends FormRequest
         return [
             'task_id.required' => 'La tarea es requerido.',
             'task_id.exists' => 'La tarea ingresada no existe',
-            'images.*.mimes' => 'La imagen es requerida.',
-            'images.*.mimes' => 'El formato de las imágenes es incorrecto, debe ser de tipo < JPG, PNG, JPEG >',
+            'image.required' => 'La imagen es requerida.',
+            'image.mimes' => 'El formato de las imágenes es incorrecto, debe ser de tipo < JPG, PNG, JPEG >',
         ];
     }
 

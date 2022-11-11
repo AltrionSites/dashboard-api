@@ -124,6 +124,17 @@ class ServiceController extends Controller
         return $this->successResponse($this->jsonResponse($service));
     }
 
+    public function restore($id)
+    {
+        $service = Service::withTrashed()->find($id);
+        if(!$service)
+        {
+            return $this->errorResponse('No se encontro el servicio.', Response::HTTP_NOT_FOUND);
+        }
+        $service->restore();
+        return $this->successResponse($this->jsonResponse($service));
+    }
+
     private function getUserInfo($id)
     {
         $user = User::find($id);
@@ -132,6 +143,7 @@ class ServiceController extends Controller
             return $this->errorResponse('No se encontro el usuario.', Response::HTTP_NOT_FOUND);
         }
         return [
+            'id' => $user->id,
             'username' => $user->username,
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,

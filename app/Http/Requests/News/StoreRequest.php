@@ -38,7 +38,7 @@ class StoreRequest extends FormRequest
         return [
             'title' => 'required|min:3|max:100',
             'content' => 'required',
-            'link' => 'url',
+            'link' => 'nullable|url',
             'slug' => 'unique:news',
             'image' => 'required|mimes:jpg,png,jpeg,JPG,PNG,JPEG',
             'visible' => 'required|'.Rule::in([0 ,1]),

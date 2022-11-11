@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->string('link');
+            $table->string('link')->nullable();
             $table->string('slug');
             $table->integer('position');
             $table->tinyInteger('visible');

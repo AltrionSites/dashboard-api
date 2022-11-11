@@ -31,7 +31,7 @@ class StoreRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'description' => 'required',
-            'link' => 'url',
+            'link' => 'url|nullable',
         ];
     }
 

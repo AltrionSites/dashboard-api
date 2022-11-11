@@ -21,6 +21,13 @@ class PutRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'slug' => Str($this->title)->slug()
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

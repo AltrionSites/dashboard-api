@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexRequest;
 use App\Http\Requests\ProjectImages\StoreRequest;
 use App\Models\Project;
 use App\Models\ProjectImage;
@@ -10,10 +11,27 @@ use App\Traits\File;
 use App\Traits\Image;
 use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectImageController extends Controller
 {
     use ApiResponser, Image, File;
+    
+    public function listImages($id)
+    {
+        $imagesQuery = ProjectImage::where('project_id', $id)->orderByDesc('id')->get();
+        return $this->successResponse($imagesQuery);
+    }
+
+    public function getImage($id)
+    {
+        $image = ProjectImage::find($id);
+        if(!$image)
+        {
+            return $this->errorResponse('No se encontro la imagen.', Response::HTTP_NOT_FOUND);
+        }
+        return Storage::get(env('PROJECTS_IMAGES').$image->name);
+    }
 
     public function store(StoreRequest $request)
     {
@@ -22,32 +40,21 @@ class ProjectImageController extends Controller
         {
             return $this->errorResponse('No se encontro el proyecto.', Response::HTTP_NOT_FOUND);
         }
-        $images = ProjectImage::where('project_id', $request->project_id)->count();
-        if($images >= 4)
+        try
         {
-            return $this->errorResponse('El máximo de imágenes por proyecto es de 4.', Response::HTTP_EXPECTATION_FAILED);
+            $uniqueImgName = $this->generateFileUniqueName(ProjectImage::class, 'name');
+            $imgExtension = $request->file('image')->getClientOriginalExtension();
+            $this->createImages($request->file('image'), env('PROJECTS_IMAGES'), $uniqueImgName, $imgExtension);
+            $image = new ProjectImage();
+            $image->name = $uniqueImgName.'.'.$imgExtension;
+            $image->project_id = $project->id;
+            $image->save();
         }
-        if(!is_null($request->images))
+        catch(Exception $e)
         {
-            foreach($request->file('images') as $image)
-            {
-                try
-                {
-                    $uniqueImgName = $this->generateFileUniqueName(ProjectImage::class, 'name');
-                    $imgExtension = $image->getClientOriginalExtension();
-                    $this->createImages($image, env('PROJECTS_IMAGES'), $uniqueImgName, $imgExtension);
-                    $image = new ProjectImage();
-                    $image->name = $uniqueImgName.'.'.$imgExtension;
-                    $image->project_id = $project->id;
-                    $image->save();
-                }
-                catch(Exception $e)
-                {
-                    return $this->errorResponse('Ocurrió un error al subir la imagen. Excepción: '. $e->getMessage(), Response::HTTP_EXPECTATION_FAILED);
-                }
-            }
+            return $this->errorResponse('Ocurrió un error al subir la imagen. Excepción: '. $e->getMessage(), Response::HTTP_EXPECTATION_FAILED);
         }
-        return $this->successResponse($this->jsonResponse($project));
+        return $this->successResponse($this->jsonResponse($image));
     }
 
     public function destroy($projectId, $id)
@@ -68,9 +75,7 @@ class ProjectImageController extends Controller
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'description' => $data->description,
-            'link' => $data->link,
-            'images' => $data->images,
+            'project_id' => $data->project_id
         ];
     }
 }

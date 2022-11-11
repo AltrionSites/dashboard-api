@@ -15,8 +15,8 @@ class ProjectImage extends Model
         'project_id',
     ];
 
-    public function projects()
-    {
-        return $this->hasOne(Project::class, 'project_id', 'id');
-    }
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
 }

@@ -8,7 +8,7 @@ trait Image
 {
     public function createImages($file, $folder, $name, $extension)
     {
-        $image = Img::make($file->path())->resize(1200, 630, function ($const) {
+        $image = Img::make($file->path())->resize(480, 480, function ($const) {
             $const->aspectRatio();
         });
         $path = $folder.$name.'.'.$extension;

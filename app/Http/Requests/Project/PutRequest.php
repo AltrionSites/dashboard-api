@@ -30,7 +30,7 @@ class PutRequest extends FormRequest
         return [
             'name' => 'required',
             'description' => 'required',
-            'link' => 'url',
+            'link' => 'nullable|url',
         ];
     }
 

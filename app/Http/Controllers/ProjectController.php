@@ -16,7 +16,7 @@ class ProjectController extends Controller
     use ApiResponser, Image;
     public function index(IndexRequest $request)
     {
-        $projectsQuery = Project::orderByDesc('id')->withCount('images');
+        $projectsQuery = Project::where('name', 'LIKE', '%'. $request->search. '%')->orderByDesc('id')->withCount('images');
         $pageSize = $request->has('page_size') ? $request->page_size : $request::MAX_PAGE_SIZE;
 
         $result = $projectsQuery->paginate($pageSize)->through(function($p) {
@@ -25,7 +25,7 @@ class ProjectController extends Controller
                 'name' => $p->name,
                 'description' => $p->description,
                 'link' => $p->link,
-                'images' => $p->images
+                'images' => $p->images->count()
             ];
         });
 
@@ -49,10 +49,11 @@ class ProjectController extends Controller
         $project->description = $request->validated('description');
         $project->link = $request->validated('link');
         $project->save();
+        $project['images'] = $project->images->count();
         return $this->successResponse($this->jsonResponse($project));
     }
 
-    public function update(PutRequest $request, $id)
+    public function update($id, PutRequest $request)
     {
         $project = Project::find($id);
         if(!$project)
@@ -63,7 +64,9 @@ class ProjectController extends Controller
             'name' => $request->validated('name'),
             'description' => $request->validated('description'),
             'link' => $request->validated('link'),
+            'images' => $project->images->count(),
         ]);
+
         return $this->successResponse($this->jsonResponse($project));
     }
 
@@ -101,7 +104,8 @@ class ProjectController extends Controller
             'id' => $data->id,
             'name' => $data->name,
             'description' => $data->description,
-            'link' => $data->link
+            'link' => $data->link,
+            'images' => $data->images,
         ];
     }
 
